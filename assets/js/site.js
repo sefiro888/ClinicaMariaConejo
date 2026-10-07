@@ -19,17 +19,18 @@
     const h = now.getHours() + now.getMinutes() / 60;
     const today = MC.hours[day] || [];
     const span = today.find(([a, b]) => h >= a && h < b);
-    if (span) return { open: true, text: `Abierto ahora · hasta las ${fmt(span[1])}` };
+    if (span) return { open: true, text: `Abierto ahora · hasta las ${fmt(span[1])}`, short: `Abierto · hasta ${fmt(span[1])}` };
     const later = today.find(([a]) => h < a);
-    if (later) return { open: false, text: `Cerrado · abrimos hoy a las ${fmt(later[0])}` };
+    if (later) return { open: false, text: `Cerrado · abrimos hoy a las ${fmt(later[0])}`, short: `Abrimos a las ${fmt(later[0])}` };
     for (let i = 1; i <= 7; i++) {
       const d = (day + i) % 7;
       if ((MC.hours[d] || []).length) {
         const when = i === 1 ? 'mañana' : `el ${MC.days[d].toLowerCase()}`;
-        return { open: false, text: `Cerrado · abrimos ${when} a las ${fmt(MC.hours[d][0][0])}` };
+        const shortWhen = i === 1 ? 'mañana' : MC.days[d].slice(0, 3).toLowerCase();
+        return { open: false, text: `Cerrado · abrimos ${when} a las ${fmt(MC.hours[d][0][0])}`, short: `Cerrado · abre ${shortWhen} ${fmt(MC.hours[d][0][0])}` };
       }
     }
-    return { open: false, text: 'Consulta nuestro horario' };
+    return { open: false, text: 'Consulta nuestro horario', short: 'Horario' };
   }
   function paintStatus() {
     if (!MC.hours.length) return;
@@ -39,9 +40,11 @@
       el.classList.toggle('is-closed', !st.open);
       const b = el.querySelector('b');
       if (b) b.textContent = st.text;
+      const sh = el.querySelector('.st-short');
+      if (sh) sh.textContent = st.short;
     });
     const d = (new Date().getDay() + 6) % 7;
-    $$('.hours li').forEach(li => li.classList.toggle('is-today', +li.dataset.day === d));
+    $$('.hours li, .week [data-day]').forEach(li => li.classList.toggle('is-today', +li.dataset.day === d));
   }
   paintStatus();
   setInterval(paintStatus, 60000);
@@ -247,6 +250,19 @@
       const end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 10;
       track.scrollTo({ left: end ? 0 : track.scrollLeft + step(), behavior: 'smooth' });
     });
+  });
+
+  /* ── Opiniones: mostrar el texto completo ── */
+  $$('.review').forEach(r => {
+    const q = $('blockquote', r), btn = $('[data-review-more]', r);
+    if (!q || !btn) return;
+    const check = () => { btn.hidden = !r.classList.contains('is-open') && q.scrollHeight <= q.clientHeight + 4; };
+    btn.addEventListener('click', () => {
+      const open = r.classList.toggle('is-open');
+      btn.textContent = open ? 'Mostrar menos' : 'Leer opinión completa';
+    });
+    check();
+    addEventListener('resize', check);
   });
 
   /* ── Preguntas: solo una abierta por lista ── */

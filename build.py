@@ -17,7 +17,7 @@ from content import (ADDRESS, AMENITIES, ANNOUNCEMENTS, CATEGORIES, CITY, COLLAB
 ROOT = Path(__file__).resolve().parent
 SITE_URL = "https://sefiro888.github.io/ClinicaMariaConejo/"
 SHARE_IMG = SITE_URL + "assets/brand/share.jpg?v=1"
-VERSION = "3.5"
+VERSION = "3.8"
 
 WA_BASE = f"https://wa.me/{PHONE_INTL}"
 WA = WA_BASE + "?text=" + quote("Hola, María 👋 Me gustaría pedir información o una cita en Fisioterapia María Conejo.")
@@ -122,7 +122,7 @@ def stars(n=5):
 def announcement():
     items = ''.join(f'<span class="ann-item">{icon(ic)}{e(t)}</span><span class="ann-dot" aria-hidden="true">✦</span>' for ic, t in ANNOUNCEMENTS)
     return f'''<div class="announce" role="region" aria-label="Avisos de la clínica">
-  <div class="announce-status" data-open-status><span class="pulse-dot"></span><b>Consultando horario…</b></div>
+  <div class="announce-status" data-open-status><span class="pulse-dot"></span><b>Consultando horario…</b><i class="st-short">Horario</i></div>
   <div class="announce-track"><div class="announce-move">{items}{items}</div></div>
   <a class="announce-cta" href="{WA}" target="_blank" rel="noopener">Pedir cita {icon('arrow')}</a>
 </div>'''
@@ -208,6 +208,15 @@ def header(active=""):
 
 
 # ───────────────────────────── PIE ─────────────────────────────
+def schedule(dark=False):
+    """Horario agrupado: días de la semana (hoy resaltado) y tres franjas claras."""
+    letters = ["L", "M", "X", "J", "V", "S", "D"]
+    days = ''.join(f'<span data-day="{i}" class="{"is-closed" if not HOURS[i][1] else ""}" title="{HOURS[i][0]}">{l}</span>' for i, l in enumerate(letters))
+    rows = [("Lunes a jueves", "11:00 – 14:00", "15:00 – 21:00"), ("Viernes", "11:00 – 14:00", "15:00 – 20:00"), ("Sábado y domingo", "Cerrado", "")]
+    dl = ''.join(f'<div class="sc-row{" closed" if not b2 else ""}"><dt>{a}</dt><dd><span>{b1}</span>{f"<span>{b2}</span>" if b2 else ""}</dd></div>' for a, b1, b2 in rows)
+    return f'<div class="sched{" dark" if dark else ""}"><div class="week" aria-hidden="true">{days}</div><dl>{dl}</dl></div>'
+
+
 def hours_list(cls="hours"):
     rows = ''
     for i, (day, spans) in enumerate(HOURS):
@@ -239,7 +248,7 @@ def footer():
     <div class="footer-col"><h3>Áreas</h3>{cats}<a href="servicios.html">Todos los servicios</a></div>
     <div class="footer-col"><h3>Destacados</h3>{popular}</div>
     <div class="footer-col"><h3>Clínica</h3><a href="clinica.html">Conoce a María</a><a href="clinica.html#equipo">Equipo</a><a href="clinica.html#tecnologia">Tecnología</a><a href="informacion.html#normativa">Normativa</a><a href="informacion.html#bonos">Bonos y tarjetas regalo</a><a href="contacto.html">Contacto</a></div>
-    <div class="footer-col footer-hours"><h3>Horario</h3>{hours_list('hours hours-dark')}<p class="footer-addr">{icon('pin')}<span>{ADDRESS}<br>{CITY}</span></p><a class="footer-map" href="{MAP}" target="_blank" rel="noopener">Cómo llegar {icon('arrow-up-right')}</a></div>
+    <div class="footer-col footer-hours"><h3>Horario</h3>{schedule(dark=True)}<p class="footer-addr">{icon('pin')}<span>{ADDRESS}<br>{CITY}</span></p><a class="footer-map" href="{MAP}" target="_blank" rel="noopener">Cómo llegar {icon('arrow-up-right')}</a></div>
   </div>
   <div class="container footer-bottom"><span>© <span data-year>2026</span> Fisioterapia María Conejo · Centro sanitario NICA {NICA}</span><span>Web de demostración · Diseño a medida</span></div>
 </footer>
@@ -247,7 +256,7 @@ def footer():
   <a href="tel:+{PHONE_INTL}">{icon('phone')}<span>Llamar</span></a>
   <a href="{WA}" target="_blank" rel="noopener">{icon('whatsapp')}<span>WhatsApp</span></a>
   <a href="contacto.html#reserva" class="ab-main">{icon('calendar')}<span>Cita</span></a>
-  <a href="{MAP}" target="_blank" rel="noopener">{icon('pin')}<span>Llegar</span></a>
+  <a href="{IG}" target="_blank" rel="noopener" class="ab-ig">{icon('insta')}<span>Instagram</span></a>
   <button type="button" data-open-menu>{icon('menu')}<span>Menú</span></button>
 </nav>
 <a class="float-ig" href="{IG}" target="_blank" rel="noopener" aria-label="Seguir a la clínica en Instagram">{icon('insta')}<span>Síguenos</span></a>
@@ -370,13 +379,14 @@ def reviews_block(title="Lo que dicen nuestros pacientes", dark=False):
     cards = ''.join(f'''<figure class="review">
   <div class="review-top">{stars()}<span class="g-badge">Google</span></div>
   <blockquote>{e(t)}</blockquote>
+  <button type="button" class="review-more" data-review-more>Leer opinión completa</button>
   <figcaption><span class="avatar">{n[0]}</span><span><b>{e(n)}</b><small>{e(w)} · Reseña verificada en Google Maps</small></span></figcaption>
 </figure>''' for n, w, t in REVIEWS)
     return f'''<section class="section reviews-sec{' dark' if dark else ''}" id="opiniones">
   <div class="container">
     <div class="reviews-head reveal">
       <div><span class="eyebrow">Opiniones reales</span><h2>{title}</h2></div>
-      <div class="rating-box"><b class="rating-num" data-count="5" data-decimals="1">{RATING}</b><div>{stars()}<span>{REVIEWS_COUNT} opiniones en Google</span></div></div>
+      <div class="rating-box"><b class="rating-num">{RATING}</b><div>{stars()}<span>{REVIEWS_COUNT} opiniones en Google</span></div></div>
     </div>
     <div class="reviews-track" data-carousel>{cards}</div>
     <div class="reviews-foot reveal"><div class="car-btns"><button type="button" data-car-prev aria-label="Opinión anterior">{icon('left')}</button><button type="button" data-car-next aria-label="Opinión siguiente">{icon('right')}</button></div><a class="link-arrow" href="{REVIEWS_URL}" target="_blank" rel="noopener">Ver todas las opiniones en Google {icon('arrow-up-right')}</a></div>
@@ -425,16 +435,48 @@ def map_block():
     return f'''<div class="map-box reveal" data-map="{MAP_EMBED}">
   <div class="map-placeholder">
     {img('fachada', 'Fachada de la clínica en C. Fuente Toril, 24')}
-    <div class="map-ph-copy"><span class="map-pin">{icon('pin')}</span><b>{ADDRESS}</b><span>{CITY}</span><button type="button" class="btn btn-light btn-sm" data-load-map>Ver mapa interactivo {icon('map')}</button><a href="{MAP}" target="_blank" rel="noopener" class="link-arrow light">Abrir en Google Maps {icon('arrow-up-right')}</a></div>
+    <div class="map-ph-copy"><span class="map-badge">{icon('pin')} Fachada de la clínica</span><button type="button" class="btn btn-light btn-sm" data-load-map>{icon('map')} Ver mapa interactivo</button></div>
   </div>
 </div>'''
+
+
+def visit_block(title="Te esperamos en <em>Villanueva del Rosario</em>"):
+    amen = ''.join(f'<li>{icon(i)}<span>{e(t)}</span></li>' for i, t in AMENITIES)
+    return f'''<section class="section visit-sec" id="visitanos">
+  <div class="container">
+    {head('Visítanos', title, 'Todo lo que necesitas para llegar y saber cuándo estamos abiertos.', center=True)}
+    <div class="visit-card reveal">
+      <div class="vc-map">{map_block()}</div>
+      <div class="vc-info">
+        <div class="vc-block">
+          <span class="vc-ic">{icon('pin')}</span>
+          <div class="vc-body">
+            <small>Dirección</small>
+            <b>{ADDRESS}</b>
+            <span>{CITY}</span>
+            <div class="vc-actions"><a class="btn btn-primary btn-sm" href="{MAP}" target="_blank" rel="noopener">{icon('map')} Cómo llegar</a><a class="btn btn-outline btn-sm" href="tel:+{PHONE_INTL}">{icon('phone')} {PHONE}</a></div>
+          </div>
+        </div>
+        <div class="vc-block">
+          <span class="vc-ic">{icon('clock')}</span>
+          <div class="vc-body">
+            <div class="vc-top"><small>Horario</small><div class="hc-status" data-open-status><span class="pulse-dot"></span><b>Consultando…</b></div></div>
+            {schedule()}
+            <p class="muted">Atención con cita previa · Festivos: consultar.</p>
+          </div>
+        </div>
+        <ul class="vc-amen">{amen}</ul>
+      </div>
+    </div>
+  </div>
+</section>'''
 
 
 def hours_card():
     return f'''<div class="hours-card reveal">
   <div class="hc-head"><span class="hc-ic">{icon('clock')}</span><div><span class="eyebrow">Horario</span><div class="hc-status" data-open-status><span class="pulse-dot"></span><b>Consultando…</b></div></div></div>
-  {hours_list()}
-  <p class="muted">Atención con cita previa. Festivos: consultar.</p>
+  {schedule()}
+  <p class="muted">Atención con cita previa · Festivos: consultar.</p>
 </div>'''
 
 
@@ -587,7 +629,7 @@ def home():
       <p class="lead reveal">En Clínica María Conejo trabajamos para que cada persona reciba una atención integral en su proceso de recuperación. La fisioterapia va más allá: se trata de comprender a fondo tu estado y acompañarte de manera cercana y segura.</p>
       <p class="reveal">Por eso comenzamos siempre con una valoración completa y personalizada —tu historial, tus hábitos y tus necesidades— para diseñar un plan adaptado a ti, con el objetivo de mejorar tu bienestar, recuperar tu movilidad y prevenir futuras lesiones.</p>
       <div class="stats reveal">
-        <div><b data-count="5" data-decimals="1">5,0</b><span>Valoración en Google</span></div>
+        <div><b>5,0</b><span>Valoración en Google</span></div>
         <div><b data-count="{REVIEWS_COUNT}">{REVIEWS_COUNT}</b><span>Opiniones de pacientes</span></div>
         <div><b data-count="3">3</b><span>Áreas de salud</span></div>
         <div><b data-count="{len(SERVICES)}">{len(SERVICES)}</b><span>Servicios</span></div>
@@ -696,17 +738,7 @@ def home():
 
 {booking_block()}
 
-<section class="section visit-sec">
-  <div class="container visit-grid">
-    {map_block()}
-    <div class="visit-copy reveal">
-      <span class="eyebrow">Cómo llegar</span>
-      <h2>Te esperamos en <em>Villanueva del Rosario</em></h2>
-      <p>Estamos en {ADDRESS}, con aparcamiento gratuito en la calle y acceso adaptado para silla de ruedas.</p>
-      {hours_card()}
-    </div>
-  </div>
-</section>'''
+{visit_block()}'''
 
 
 # ───────────────────────────── SERVICIOS ─────────────────────────────
@@ -956,7 +988,7 @@ def contact_page():
   <a class="c-card reveal" style="--d:300ms" href="{IG}" target="_blank" rel="noopener"><span class="c-ic">{icon('insta')}</span><small>Instagram</small><b>@fisiomariacm</b><span class="link-arrow">Seguir {icon('arrow')}</span></a>
 </div></section>
 {booking_block(title='Pide tu cita sin complicaciones')}
-<section class="section visit-sec"><div class="container visit-grid">{map_block()}<div class="visit-copy">{hours_card()}<ul class="amen reveal">{''.join(f'<li>{icon(i)}<span>{e(t)}</span></li>' for i, t in AMENITIES)}</ul></div></div></section>
+{visit_block('Cómo llegar a la <em>clínica</em>')}
 <section class="section section-soft"><div class="container faq-grid"><div>{head('Antes de escribirnos', 'Dudas <em>rápidas</em>')}</div><div class="reveal">{faq_list(HOME_FAQS[:5])}</div></div></section>'''
 
 
