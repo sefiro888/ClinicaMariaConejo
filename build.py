@@ -15,6 +15,8 @@ from content import (ADDRESS, AMENITIES, ANNOUNCEMENTS, CATEGORIES, CITY, COLLAB
                      WINBACK_LEVELS)
 
 ROOT = Path(__file__).resolve().parent
+SITE_URL = "https://sefiro888.github.io/ClinicaMariaConejo/"
+SHARE_IMG = SITE_URL + "assets/brand/share.jpg?v=1"
 VERSION = "3.3"
 
 WA_BASE = f"https://wa.me/{PHONE_INTL}"
@@ -261,7 +263,9 @@ def footer():
 <button class="to-top" type="button" aria-label="Volver arriba"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" class="tt-track"/><circle cx="22" cy="22" r="20" class="tt-bar"/></svg>{icon('arrow')}</button>'''
 
 
-def page(title, description, body, active="", cls="", extra_head=""):
+def page(title, description, body, active="", cls="", extra_head="", filename="index.html"):
+    url = SITE_URL + ("" if filename == "index.html" else filename)
+    og_title = "Fisioterapia María Conejo · Villanueva del Rosario" if filename == "index.html" else f"{title} · Fisioterapia María Conejo"
     return f'''<!doctype html>
 <html lang="es">
 <head>
@@ -271,10 +275,23 @@ def page(title, description, body, active="", cls="", extra_head=""):
 <meta name="description" content="{e(description)}">
 <meta name="theme-color" content="#4a3a30">
 <meta name="robots" content="noindex">
-<meta property="og:title" content="{e(title)} · Fisioterapia María Conejo">
-<meta property="og:description" content="{e(description)}">
-<meta property="og:image" content="assets/images/maria.webp">
+<link rel="canonical" href="{url}">
+<meta property="og:site_name" content="Fisioterapia María Conejo">
+<meta property="og:locale" content="es_ES">
 <meta property="og:type" content="website">
+<meta property="og:url" content="{url}">
+<meta property="og:title" content="{e(og_title)}">
+<meta property="og:description" content="{e(description)}">
+<meta property="og:image" content="{SHARE_IMG}">
+<meta property="og:image:secure_url" content="{SHARE_IMG}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="María Conejo en la recepción de su clínica de fisioterapia, nutrición y podología">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{e(og_title)}">
+<meta name="twitter:description" content="{e(description)}">
+<meta name="twitter:image" content="{SHARE_IMG}">
 <link rel="icon" href="assets/brand/icon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -996,7 +1013,7 @@ def site_data():
 def jsonld():
     data = {
         "@context": "https://schema.org", "@type": "Physiotherapy", "name": "Clínica Fisioterapia María Conejo",
-        "telephone": "+34 656 64 33 30", "image": "assets/images/maria.webp",
+        "telephone": "+34 656 64 33 30", "image": SHARE_IMG, "url": SITE_URL,
         "address": {"@type": "PostalAddress", "streetAddress": ADDRESS, "postalCode": "29312", "addressLocality": "Villanueva del Rosario", "addressRegion": "Málaga", "addressCountry": "ES"},
         "geo": {"@type": "GeoCoordinates", "latitude": 37.0026564, "longitude": -4.3687152},
         "aggregateRating": {"@type": "AggregateRating", "ratingValue": "5.0", "reviewCount": REVIEWS_COUNT},
@@ -1025,6 +1042,6 @@ for item in SERVICES:
     PAGES[f"servicio-{item['slug']}.html"] = (item['title'], item['lead'], service_page(item), "", "service", DATA)
 
 for filename, (title, description, body, active, cls, extra) in PAGES.items():
-    (ROOT / filename).write_text(page(title, description, body, active, cls, extra), encoding="utf-8")
+    (ROOT / filename).write_text(page(title, description, body, active, cls, extra, filename), encoding="utf-8")
 
 print(f"Generadas {len(PAGES)} páginas HTML")
