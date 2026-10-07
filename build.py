@@ -17,7 +17,7 @@ from content import (ADDRESS, AMENITIES, ANNOUNCEMENTS, CATEGORIES, CITY, COLLAB
 ROOT = Path(__file__).resolve().parent
 SITE_URL = "https://sefiro888.github.io/ClinicaMariaConejo/"
 SHARE_IMG = SITE_URL + "assets/brand/share.jpg?v=1"
-VERSION = "3.3"
+VERSION = "3.5"
 
 WA_BASE = f"https://wa.me/{PHONE_INTL}"
 WA = WA_BASE + "?text=" + quote("Hola, María 👋 Me gustaría pedir información o una cita en Fisioterapia María Conejo.")
@@ -615,14 +615,6 @@ def home():
   </div>
 </section>
 
-<section class="section method-sec">
-  <div class="container">
-    {head('Nuestro método', 'Primero, tu historia. <em>Después</em>, un plan.', 'Así es el camino que recorremos contigo desde la primera visita.', center=True)}
-    <ol class="steps">{steps_html}</ol>
-    <div class="pillars">{pillars}</div>
-  </div>
-</section>
-
 <section class="section tech-sec" id="tecnologia">
   <div class="container">
     {head('Tecnología al servicio del cuidado', 'Precisión que se <em>nota</em>', 'Incorporamos tecnología de última generación porque aporta seguridad, optimiza los resultados y te ayuda a sentirte confiado en todo momento.', light=True)}
@@ -665,8 +657,6 @@ def home():
   </div>
 </section>
 
-{exercise_wheel()}
-
 <section class="section maria-sec">
   <div class="container maria-grid">
     <div class="maria-media reveal">
@@ -686,18 +676,6 @@ def home():
 
 {reels_strip()}
 
-<section class="kids-band">
-  <div class="container kids-grid">
-    <div class="kids-media reveal">{img('reel-bebe', 'Fisioterapia pediátrica: manos de la fisioterapeuta sujetando el pie de un bebé')}</div>
-    <div class="kids-copy reveal">
-      <span class="eyebrow">Fisioterapia pediátrica</span>
-      <h2>Para los más <em>pequeños</em>, desde sus primeros días</h2>
-      <div class="kids-tags"><span>🍼 Cólico del lactante</span><span>👶🏼 Deformidades craneales</span><span>🚼 Trastornos del desarrollo</span><span>👦🏼 Patologías pediátricas</span><span>🔎 Valoración y prevención</span><span>👩🏼‍🍼 Asesoramiento de lactancia</span></div>
-      <a class="link-arrow" href="servicio-fisioterapia-pediatrica.html">Conocer la atención pediátrica {icon('arrow')}</a>
-    </div>
-  </div>
-</section>
-
 {reviews_block()}
 
 <section class="section gift-sec">
@@ -716,18 +694,6 @@ def home():
   </div>
 </section>
 
-{ig_strip()}
-
-<section class="section faq-home">
-  <div class="container faq-grid">
-    <div>
-      {head('Resolvemos tus dudas', 'Preguntas <em>frecuentes</em>', 'Lo que más nos preguntáis antes de la primera visita.')}
-      {hours_card()}
-    </div>
-    <div class="reveal">{faqs}<a class="link-arrow" href="informacion.html#preguntas">Ver más preguntas {icon('arrow')}</a></div>
-  </div>
-</section>
-
 {booking_block()}
 
 <section class="section visit-sec">
@@ -737,7 +703,7 @@ def home():
       <span class="eyebrow">Cómo llegar</span>
       <h2>Te esperamos en <em>Villanueva del Rosario</em></h2>
       <p>Estamos en {ADDRESS}, con aparcamiento gratuito en la calle y acceso adaptado para silla de ruedas.</p>
-      <ul class="amen">{''.join(f'<li>{icon(i)}<span>{e(t)}</span></li>' for i, t in AMENITIES)}</ul>
+      {hours_card()}
     </div>
   </div>
 </section>'''

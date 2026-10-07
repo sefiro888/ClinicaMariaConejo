@@ -1180,3 +1180,5 @@ a.reel-card .reel-play{top:50%;width:76px;height:76px;margin:-38px 0 0 -38px}
 }
 a.reel-card .reel-play{background:#fffaf3}
 .s-card-media img[src*="podologia-portada"],.audience-media img[src*="podologia-portada"],.f-card img[src*="podologia-portada"]{object-position:50% 46%}
+.home .section{padding:clamp(60px,7.5vw,108px) 0}
+.home .areas-sec .center-end{margin-top:40px}
