@@ -1,0 +1,23 @@
+__pycache__/
+*.pyc
+# Imágenes generadas con IA: ya no se usan en la web
+assets/generated-src/
+prepare_generated_assets.py
+assets/images/fisioterapia-musculoesqueletica.webp
+assets/images/terapia-manual.webp
+assets/images/tecnicas-invasivas.webp
+assets/images/fisioterapia-pediatrica.webp
+assets/images/rehabilitacion-postquirurgica.webp
+assets/images/fisioterapia-domicilio.webp
+assets/images/valoracion-nutricional.webp
+assets/images/planes-alimentacion.webp
+assets/images/nutricion-clinica.webp
+assets/images/nutricion-deportiva.webp
+assets/images/educacion-nutricional.webp
+assets/images/estudio-pisada.webp
+assets/images/plantillas-personalizadas.webp
+assets/images/ortesis-silicona.webp
+assets/images/quiropodia.webp
+assets/images/reconstruccion-ungueal.webp
+assets/images/podologia-general.webp
+assets/images/podologia-domicilio.webp
